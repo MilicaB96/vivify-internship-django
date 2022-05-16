@@ -2,6 +2,8 @@
 from django.contrib import admin
 from django.urls import path,include
 from viewsapp.urls import homeApiView 
+from userapp.urls import  userRouter
+from rest_framework import routers
 """praksa URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -17,9 +19,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+router = routers.DefaultRouter()
+router.registry.extend(userRouter.registry)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include(homeApiView)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('',include(router.urls))
+    
 ]

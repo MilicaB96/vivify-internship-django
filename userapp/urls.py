@@ -1,9 +1,10 @@
 from django.urls import path
 from rest_framework import routers
 from .views import LoginViewSet, UserViewSet 
+
 userRouter = routers.SimpleRouter()
 userRouter.register(r'user', UserViewSet)
 
 userApiView = [
-    path('login',LoginViewSet.as_view(), name = 'login')
+    path('login',LoginViewSet.as_view(), name = 'login'),
 ]

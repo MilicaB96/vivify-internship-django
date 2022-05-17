@@ -10,6 +10,7 @@ from .serializer import MyTokenObtainPairSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import  IsAuthenticated,IsAdminUser
+from django.db.models import Q
 
 # Create your views here.
 class UserViewSet(viewsets.GenericViewSet, RetrieveModelMixin, ListModelMixin):
@@ -21,13 +22,13 @@ class UserViewSet(viewsets.GenericViewSet, RetrieveModelMixin, ListModelMixin):
     def get_user_data(self, request):
         user = self.request.user
         serializer = UserSerializer(user)
-        return Response(status = 200)
+        return Response(serializer.data)
     def get_queryset(self):
-        queryset = User.objects.all()
         name = self.request.query_params.get('name')
         if name is not None:
-            queryset = queryset.filter(first_name=name) or queryset.filter(last_name=name)
-        return queryset
+            self.queryset = self.queryset.filter(Q(first_name=name) | Q(last_name=name))
+        return self.queryset
+        
     
 class LoginViewSet(TokenObtainPairView):
     serializer_class=MyTokenObtainPairSerializer

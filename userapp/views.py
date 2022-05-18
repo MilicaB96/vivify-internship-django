@@ -40,9 +40,10 @@ class LoginViewSet(TokenObtainPairView):
 
 class UserProfile(APIView):
     def get(self, request, user_id):
-        user = User.objects.get(id = user_id)
-        if user is not None:
+        try:
+            user = User.objects.get(id = user_id)
             return render(request, 'profile.html', {'first_name':user.first_name, 'last_name':user.last_name})
-        else:
-            raise Http404("User not found")
+        except Exception as e:
+            return Response(e.args,status=404)
      
+        

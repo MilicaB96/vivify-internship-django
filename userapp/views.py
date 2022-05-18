@@ -1,3 +1,4 @@
+import profile
 from re import U
 from urllib import request
 from django.shortcuts import render
@@ -11,9 +12,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import  IsAuthenticated,IsAdminUser
 from django.db.models import Q
+from django.shortcuts import render
+from rest_framework.views import APIView
+from django.http import Http404
 
 # Create your views here.
-class UserViewSet(viewsets.GenericViewSet, RetrieveModelMixin, ListModelMixin):
+class UserViewSet(viewsets.GenericViewSet, ListModelMixin):
+    # print(request.data)
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
@@ -32,4 +37,13 @@ class UserViewSet(viewsets.GenericViewSet, RetrieveModelMixin, ListModelMixin):
     
 class LoginViewSet(TokenObtainPairView):
     serializer_class=MyTokenObtainPairSerializer
-    
+
+class UserProfile(APIView):
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id = user_id)
+            return render(request, 'profile.html', {'first_name':user.first_name, 'last_name':user.last_name})
+        except Exception as e:
+            return Response(e.args,status=404)
+     
+        
